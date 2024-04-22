@@ -8,17 +8,17 @@ import {useDrop} from "react-dnd";
 
 const PictureList = [
   {
-    id: 0,
+    id: crypto.randomUUID(),
     name: "cat",
     url: cat,
   },
   {
-    id: 1,
+    id: crypto.randomUUID(),
     name: "dog",
     url: dog,
   },
   {
-    id: 2,
+    id: crypto.randomUUID(),
     name: "fish",
     url: fish,
   },
@@ -36,34 +36,43 @@ const draggablePictures = PictureList.map((pic) => (
 function DragDrop() {
   const [board, setBoard] = useState([]);
 
-  const [{isOver}, drop] = useDrop(() => ({
+  // const [{isOver}, drop] = useDrop(() => ({
+  const [, drop] = useDrop(() => ({
     accept: "image",
     drop: (item) => addImageToBoard(item.id),
     collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
+      // isOver: !!monitor.isOver(),
+      isOver: monitor.isOver,
     }),
   }));
 
   const addImageToBoard = (id) => {
-    // console.log("id: ", id);
-    const draggedPicture = PictureList.filter(picture => picture.id === id)[0]
-    console.log('draggedPicture: ', draggedPicture);
-    setBoard([...board], PictureList.filter(picture => picture.id === id))
+    const draggedPicture = PictureList.filter(
+      (picture) => picture.id === id
+    )[0];
+    console.log("draggedPicture: ", draggedPicture);
+    setBoard((board) => [...board, draggedPicture]);
+  };
+
+  const resetBoard = () => {
+    setBoard([]);
   };
 
   return (
     <>
       <div className="Pictures">{draggablePictures}</div>
       <div className="Board" ref={drop}>
-        {board}
-        {/* {board.map((pic) => (
+      <button onClick={resetBoard}>Reset Pet board</button>
+      <h3>Pet board</h3>
+        {board.map((pic) => (
           <Picture
             id={pic.id}
             key={`${pic.id}${pic.name}`}
             name={pic.name}
+            // url={pic.url}
             url={pic.url}
           />
-        ))} */}
+        ))}
       </div>
     </>
   );
