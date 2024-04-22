@@ -1,9 +1,10 @@
-import React from "react";
-import classes from "./DragDrop.module.css";
+import React, {useState} from "react";
 import cat from "../assets/cat.jpeg";
 import dog from "../assets/dog.jpeg";
 import fish from "../assets/fish.jpeg";
 import Picture from "./Picture";
+import "../App.css";
+import {useDrop} from "react-dnd";
 
 const PictureList = [
   {
@@ -23,15 +24,6 @@ const PictureList = [
   },
 ];
 
-const renderedPictureList = PictureList.map((pic) => (
-  <img
-    className={classes.pet}
-    src={pic.url}
-    alt={`${pic.name} pic`}
-    key={pic.id}
-  />
-));
-
 const draggablePictures = PictureList.map((pic) => (
   <Picture
     id={pic.id}
@@ -42,11 +34,37 @@ const draggablePictures = PictureList.map((pic) => (
 ));
 
 function DragDrop() {
+  const [board, setBoard] = useState([]);
+
+  const [{isOver}, drop] = useDrop(() => ({
+    accept: "image",
+    drop: (item) => addImageToBoard(item.id),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+
+  const addImageToBoard = (id) => {
+    // console.log("id: ", id);
+    const draggedPicture = PictureList.filter(picture => picture.id === id)[0]
+    console.log('draggedPicture: ', draggedPicture);
+    setBoard([...board], PictureList.filter(picture => picture.id === id))
+  };
+
   return (
     <>
-      <div className="pictures">renderedPictures: {renderedPictureList}</div>
-      <div>draggablePictures: {draggablePictures}</div>
-      <div className="board"></div>
+      <div className="Pictures">{draggablePictures}</div>
+      <div className="Board" ref={drop}>
+        {board}
+        {/* {board.map((pic) => (
+          <Picture
+            id={pic.id}
+            key={`${pic.id}${pic.name}`}
+            name={pic.name}
+            url={pic.url}
+          />
+        ))} */}
+      </div>
     </>
   );
 }
