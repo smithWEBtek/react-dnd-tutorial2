@@ -24,7 +24,7 @@ function Picture({id, url, name}) {
 }
 
 Picture.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
 };
